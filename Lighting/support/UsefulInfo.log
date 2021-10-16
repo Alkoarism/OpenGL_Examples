@@ -1,0 +1,17 @@
+Things to be noted:
+	Understand how to retrieve a normal vector from a model´s vertices
+	Change the camera to a true first person with heigh adjustment
+
+	Form Learn OpenGL:
+		"Inversing matrices is a costly operation for shaders, so wherever possible
+	try to avoid doing inverse operations since they have to be done on each vertex
+	of your scene. For learning purposes this is fine, but for an efficient
+	application you'll likely want to calculate the normal matrix on the CPU and send
+	it to the shaders via a uniform before drawing (just like the model matrix)."
+
+Things to read about:
+	An article about a special matrix used to normalize non-uniform matrix
+	transformations
+		http://www.lighthouse3d.com/tutorials/glsl-12-tutorial/the-normal-matrix/
+
+	Research about other lighting algorithms
