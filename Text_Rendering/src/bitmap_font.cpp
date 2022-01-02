@@ -2,17 +2,11 @@
 
 using namespace std;
 
-int BitmapFont::m_TextNumber = 0;
-
-BitmapFont::BitmapFont(std::string sName) : shaderName(sName) {
+BitmapFont::BitmapFont(Shader& s, Texture& t) 
+    : m_Shader(s), m_Texture(t) {
     m_CurX = m_CurY = 0;
     m_Red = m_Green = m_Blue = m_Alpha = 1.0f;
     m_InvertYAxis = false;
-
-    m_TextName = "Bitmap_" + to_string(m_TextNumber);
-    ++BitmapFont::m_TextNumber;
-
-    Renderer::LoadTexture(m_TextName);
 }
 
 bool BitmapFont::Load(const char* fname)
@@ -75,15 +69,15 @@ bool BitmapFont::Load(const char* fname)
     {
     case 8:
         //OpenGL supports single channel images through the RED channel
-        Renderer::GetTexture(m_TextName).format = GL_RED;
+        m_Texture.format = GL_RED;
         break;
 
     case 24:
-        Renderer::GetTexture(m_TextName).format = GL_RGB;
+        m_Texture.format = GL_RGB;
         break;
 
     case 32:
-        Renderer::GetTexture(m_TextName).format = GL_RGBA;
+        m_Texture.format = GL_RGBA;
         break;
 
     default: // Unsupported BPP
@@ -103,13 +97,16 @@ bool BitmapFont::Load(const char* fname)
     // Grab image data
     memcpy(img.get(), &dat.get()[MAP_DATA_OFFSET], (ImgX * ImgY) * (bpp / 8));
 
+    m_Texture.type = GL_TEXTURE_2D;
+
     // Fonts should be rendered at native resolution so no need for texture filtering
-    Renderer::GetTexture(m_TextName).SetPar(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    Renderer::GetTexture(m_TextName).SetPar(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    m_Texture.SetPar(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    m_Texture.SetPar(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     // Stop chararcters from bleeding over edges
-    Renderer::GetTexture(m_TextName).SetPar(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    Renderer::GetTexture(m_TextName).SetPar(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    Renderer::GetTexture(m_TextName).Load(img.get(), ImgX, ImgY);
+    m_Texture.SetPar(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    m_Texture.SetPar(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    m_Texture.Load(img.get(), ImgX, ImgY);
 
     Unbind();
 
@@ -144,8 +141,6 @@ void BitmapFont::SetColor
     m_Green = g;
     m_Blue = b;
     m_Alpha = a;
-    Renderer::GetShader(shaderName).SetUniform
-    ("textColor", glm::vec4(m_Red, m_Green, m_Blue, m_Alpha));
 }
 
 void BitmapFont::ReverseYAxis(const bool& State)
@@ -171,6 +166,8 @@ void BitmapFont::Print(const char* text) {
         0, 2, 3
     };
     VertexBufferLayout vbl;
+    vbl.Push<float>(3);
+    vbl.Push<float>(2);
     vbl.Push<float>(4);
 
     IndexBuffer ib(indices, 6);
@@ -185,11 +182,11 @@ void BitmapFont::Print(const char* text) {
         v1 = v + m_RowFactor;
         
         float coords[] = {
-            //vertex coords                          //texture	
-           (m_CurX + m_CellX), (m_CurY + m_YOffset), u1, v,     //top right
-           (m_CurX + m_CellX),  m_CurY,              u1, v1,    //bottom right
-            m_CurX,             m_CurY,              u,  v1,    //bottom left
-            m_CurX,            (m_CurY + m_YOffset), u,  v,     //top left
+            //vertex coords			                       //texture	//colors	
+           (m_CurX + m_CellX), (m_CurY + m_YOffset), 0.0f, u1, v,	    m_Red, m_Green, m_Blue, m_Alpha,    //top right
+           (m_CurX + m_CellX),  m_CurY,              0.0f, u1, v1,	    m_Red, m_Green, m_Blue, m_Alpha,    //bottom right
+            m_CurX,             m_CurY,              0.0f, u,  v1,	    m_Red, m_Green, m_Blue, m_Alpha,    //bottom left
+            m_CurX,            (m_CurY + m_YOffset), 0.0f, u,  v,       m_Red, m_Green, m_Blue, m_Alpha     //top left
         };
 
         m_CurX += m_Width[text[i]];
@@ -198,7 +195,7 @@ void BitmapFont::Print(const char* text) {
 
         VertexBuffer vb(coords, sizeof(coords));
         va.AddBuffer(vb, vbl);
-        Renderer::Render(va, ib, Renderer::GetShader(this->shaderName));
+        Renderer::Render(va, ib, m_Shader);
     }
 
     Unbind();
@@ -211,10 +208,10 @@ void BitmapFont::Print(const char* text, const int& x, const int& y) {
 
 void BitmapFont::Bind()
 {
-    Renderer::GetTexture(m_TextName).Bind();
+    m_Texture.Bind();
 }
 
 void BitmapFont::Unbind()
 {
-    Renderer::GetTexture(m_TextName).Unbind();
+    m_Texture.Unbind();
 }

@@ -124,6 +124,7 @@ int main() {
 	FT_Done_FreeType(ft);
 	// initialization before rendering -------------------------------------------
 	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::ortho(
 		0.0f, static_cast<float>(screenHeight), 
 		0.0f, static_cast<float>(screenWidth));
@@ -146,10 +147,12 @@ int main() {
 	std::string bitmapShader = "bitmap2D";
 	Shader& bitmap2D = Renderer::LoadShader(
 		bitmapShader,
-		"res\\shaders\\bitmap_vert2D.shader",
-		"res\\shaders\\bitmap_frag2D.shader"
+		"res\\shaders\\bitmap_vert.shader",
+		"res\\shaders\\bitmap_frag.shader"
 	);
+	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 1.0f));
 	bitmap2D.SetUniform("model", model);
+	bitmap2D.SetUniform("view", view);
 	bitmap2D.SetUniform("projection", projection);
 
 	glGenVertexArrays(1, &VAO);
@@ -162,8 +165,8 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	//BitmapFont font(bitmapShader);
-	//font.Load("res\\bitmap\\timesNewRoman.bff");
+	BitmapFont font(bitmap2D, Renderer::LoadTexture("bitmapTexture"));
+	font.Load("res\\bitmap\\timesNewRoman.bff");
 
 	// render loop (happens every frame) -----------------------------------------
 	while (!glfwWindowShouldClose(window)) {
@@ -174,12 +177,10 @@ int main() {
 		Renderer::RenderConfig(0.2f, 0.4f, 0.2f, 1.0f);
 
 		// ---> space configurations and rendering
-		//font.Print("BitmapFont Text", 50.0f, 50.0f);
+		font.Print("BitmapFont sample text", 10.0f, 50.0f);
+		font.Print("(C) LearnOpenGL.com", 200.0f, 250.0f);
 
-		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(glm::abs(sin(glfwGetTime())), 1.0f, 1.0f));
-		main2D.SetUniform("model", model);
-		RenderText(main2D, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		RenderText(main2D, "Freetype sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 		RenderText(main2D, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
 		// -> check and call events and swap the buffers
