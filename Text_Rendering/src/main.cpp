@@ -16,14 +16,16 @@ const int screenWidth = 600, screenHeight = 800;
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
 struct Character {
-	unsigned int textureID;
+	Texture& texture;
 	glm::ivec2 size;
 	glm::ivec2 bearing;
 	unsigned int advance;
 };
 
 std::map<char, Character> characters;
-unsigned int VAO, VBO;
+std::unique_ptr<VertexArray> VAO;
+std::unique_ptr<VertexBuffer> VBO;
+std::unique_ptr<IndexBuffer> IBO;
 
 int main() {
 	// glfw: initialize and configure --------------------------------------------
@@ -81,7 +83,7 @@ int main() {
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //disable byte-alignment restriction
 
-	for (unsigned char c = 32; c < 128; ++c) {
+	for (unsigned char c = 32; c < 127; ++c) {
 		//load character glyph
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
 			std::cout << "ERROR::FREETYPE::FAILED_TO_LOAD_GLYPH: " 
@@ -90,25 +92,19 @@ int main() {
 		}
 
 		//generate texture
-		unsigned int texture;
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(
-			GL_TEXTURE_2D,
-			0,
-			GL_RED,
+		Texture& texture = Renderer::LoadTexture("Freetype_" + std::to_string(c));
+		texture.type = GL_TEXTURE_2D;
+		texture.format = GL_RED;
+		texture.Load(
+			face->glyph->bitmap.buffer, 
 			face->glyph->bitmap.width, 
-			face->glyph->bitmap.rows,
-			0,
-			GL_RED,
-			GL_UNSIGNED_BYTE,
-			face->glyph->bitmap.buffer);
+			face->glyph->bitmap.rows);
 
 		//set texture options
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		texture.SetPar(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		texture.SetPar(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		texture.SetPar(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		texture.SetPar(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		Character character = {
 			texture,
@@ -128,12 +124,6 @@ int main() {
 	glm::mat4 projection = glm::ortho(
 		0.0f, static_cast<float>(screenHeight), 
 		0.0f, static_cast<float>(screenWidth));
-
-	Shader& shader = Renderer::LoadShader(
-		"freetype2D", 
-		"res\\shaders\\freetype2D.vert", 
-		"res\\shaders\\freetype2D.frag");
-	shader.SetUniform("projection", projection);
 
 	std::string shaderName = "main2D";
 	Shader& main2D = Renderer::LoadShader(
@@ -155,18 +145,21 @@ int main() {
 	bitmap2D.SetUniform("view", view);
 	bitmap2D.SetUniform("projection", projection);
 
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	VAO.reset(new VertexArray());
+	VBO.reset(new VertexBuffer(nullptr, sizeof(float) * 4 * 4, GL_DYNAMIC_DRAW));
+	VertexBufferLayout VBL;
+	VBL.Push<float>(4);
+	VAO->AddBuffer(*VBO, VBL);
 
-	BitmapFont font(bitmap2D, Renderer::LoadTexture("bitmapTexture"));
+	unsigned int indices[] = {
+		0, 1, 2,
+		0, 2, 3
+	};
+	IBO.reset(new IndexBuffer(indices, 6));
+
+	BitmapFont font(bitmap2D, Renderer::LoadTexture("BitmapTexture"));
 	font.Load("res\\bitmap\\timesNewRoman.bff");
+	font.print_2D = true;
 
 	// render loop (happens every frame) -----------------------------------------
 	while (!glfwWindowShouldClose(window)) {
@@ -177,10 +170,15 @@ int main() {
 		Renderer::RenderConfig(0.2f, 0.4f, 0.2f, 1.0f);
 
 		// ---> space configurations and rendering
-		font.Print("BitmapFont sample text", 10.0f, 50.0f);
+		font.SetColor(glm::vec4(
+			sin(glfwGetTime() + (2 * 3.14 / 3)),
+			sin(glfwGetTime()),
+			sin(glfwGetTime() - (2 * 3.14 / 3)),
+			1.0f));
+		font.Print("BitmapFont sample text.", 10.0f, 50.0f);
 		font.Print("(C) LearnOpenGL.com", 200.0f, 250.0f);
 
-		RenderText(main2D, "Freetype sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		RenderText(main2D, "Freetype sample text.", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 		RenderText(main2D, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
 		// -> check and call events and swap the buffers
@@ -204,7 +202,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 void RenderText(Shader& s, std::string text, float x, float y, float scale, glm::vec3 color) {
 	s.SetUniform("textColor", color);
 	glActiveTexture(GL_TEXTURE0);
-	glBindVertexArray(VAO);
+	VAO->Bind();
 
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); ++c) {
@@ -217,28 +215,19 @@ void RenderText(Shader& s, std::string text, float x, float y, float scale, glm:
 		float h = ch.size.y * scale;
 		
 		//update VBO for each character
-		float vertices[6][4] = {
+		float vertices[4][4] = {
 				   { posX,     posY + h,   0.0f, 0.0f },
 				   { posX,     posY,       0.0f, 1.0f },
-				   { posX + w, posY,       1.0f, 1.0f },
-
-				   { posX,     posY + h,   0.0f, 0.0f },
 				   { posX + w, posY,       1.0f, 1.0f },
 				   { posX + w, posY + h,   1.0f, 0.0f }
 		};
 
 		// render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, ch.textureID);
-		//update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		//render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		ch.texture.Bind();
+		VBO->Update(vertices, sizeof(vertices), 0);
+		Renderer::Render(*VAO, *IBO, s);
 
 		//now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		x += (ch.advance >> 6) * scale; //bitshift by 6 to get value in pixels (2^6 = 64)
 	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
 }

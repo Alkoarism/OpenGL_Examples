@@ -23,6 +23,11 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept {
 	return *this;
 }
 
+void VertexBuffer::Update(const void* data, unsigned int size, unsigned int offset) {
+	this->Bind();
+	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+}
+
 void VertexBuffer::Bind() const {
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferID);
 }

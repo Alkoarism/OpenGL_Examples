@@ -19,25 +19,24 @@ typedef struct
 class BitmapFont
 {
 public:
+	bool print_2D;
+
 	BitmapFont(Shader&, Texture&);
 
 	bool Load(const char* fname);
 	int  GetWidth(const char* Text);
 
-	void SetCursor(const int& x, const int& y);
+	void SetColor(glm::vec4);
 	void SetColor
 		(const float& r, const float& g, const float& b, const float& a = 1.0f);
 	void ReverseYAxis(const bool&);
-	void Print(const char* txt);
-	void Print(const char* txt, const int& x, const int& y);
+	void Print(const char* txt, float x, float y);
 
 private:
 	int m_CellX, m_CellY, m_YOffset, m_RowPitch;
 	char m_Base;
 	char m_Width[256];
-	int m_CurX, m_CurY;
 	float m_RowFactor, m_ColFactor;
-	float m_Red, m_Green, m_Blue, m_Alpha;
 	bool m_InvertYAxis;
 
 	Shader& m_Shader;

@@ -5,7 +5,7 @@
 
 class VertexBuffer {
 public:
-	VertexBuffer(const void*, unsigned int, GLenum usage = GL_STATIC_DRAW);
+	VertexBuffer(const void* data, unsigned int size, GLenum usage = GL_STATIC_DRAW);
 	~VertexBuffer();
 
 	VertexBuffer(const VertexBuffer&) = delete;
@@ -13,6 +13,7 @@ public:
 	VertexBuffer(VertexBuffer&& other) noexcept;
 	VertexBuffer& operator=(VertexBuffer&& other) noexcept;
 
+	void Update(const void* data, unsigned int size, unsigned int offset);
 	void Bind() const;
 	void Unbind() const;
 

@@ -20,8 +20,9 @@ public:
 
 	static Shader& LoadShader
 	(const std::string name, const char* vertPath, const char* fragPath);
+	static Texture& LoadTexture(std::string name);
 	static Texture& LoadTexture
-	(std::string name, const char* file = nullptr, bool alpha = false, bool flipImage = false);
+	(std::string name, const char* file, bool alpha, bool flipImage);
 
 	static float GetLastFrame() { return lastFrame; }
 	static float GetDeltaTime() { return deltaTime; }

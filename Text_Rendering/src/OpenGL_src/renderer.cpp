@@ -70,28 +70,31 @@ Texture& Renderer::LoadTexture
     (std::string name, const char* file, bool alpha, bool flipImage) {
 
     textures.emplace(name, Texture());
-    if (file) {
-        if (alpha) {
-            textures.at(name).format = GL_RGBA;
-        }
-
-        if (flipImage)
-            stbi_set_flip_vertically_on_load(flipImage);
-
-        int imgWidth, imgHeight, nrChannels;
-        unsigned char* data
-            = stbi_load(file, &imgWidth, &imgHeight, &nrChannels, 0);
-        if (data) {
-            textures.at(name).Load(data, imgWidth, imgHeight);
-        }
-        else {
-            const char* failLog = stbi_failure_reason();
-            std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE: "
-                << name << "\n" << failLog << std::endl;
-        }
-        stbi_image_free(data);
+    if (alpha) {
+        textures.at(name).format = GL_RGBA;
     }
 
+    if (flipImage)
+        stbi_set_flip_vertically_on_load(flipImage);
+
+    int imgWidth, imgHeight, nrChannels;
+    unsigned char* data
+        = stbi_load(file, &imgWidth, &imgHeight, &nrChannels, 0);
+    if (data) {
+        textures.at(name).Load(data, imgWidth, imgHeight);
+    }
+    else {
+        const char* failLog = stbi_failure_reason();
+        std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE: "
+            << name << "\n" << failLog << std::endl;
+    }
+    stbi_image_free(data);
+
+    return textures.at(name);
+}
+
+Texture& Renderer::LoadTexture(std::string name) {
+    textures.emplace(name, Texture());
     return textures.at(name);
 }
 

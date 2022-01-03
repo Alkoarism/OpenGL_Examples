@@ -3,10 +3,8 @@
 using namespace std;
 
 BitmapFont::BitmapFont(Shader& s, Texture& t) 
-    : m_Shader(s), m_Texture(t) {
-    m_CurX = m_CurY = 0;
-    m_Red = m_Green = m_Blue = m_Alpha = 1.0f;
-    m_InvertYAxis = false;
+    : m_Shader(s), m_Texture(t), print_2D(false), m_InvertYAxis(false) {
+    this->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 bool BitmapFont::Load(const char* fname)
@@ -127,25 +125,19 @@ int BitmapFont::GetWidth(const char* Text)
     return size;
 }
 
-// Set the position for text output, this will be updated as text is printed
-void BitmapFont::SetCursor(const int& x, const int& y)
-{
-    m_CurX = x;
-    m_CurY = y;
+void BitmapFont::SetColor(glm::vec4 color) {
+    m_Shader.SetUniform("fontColor", color);
 }
 
-void BitmapFont::SetColor
-    (const float& r, const float& g,
-     const float& b, const float& a) {
-    m_Red = r;
-    m_Green = g;
-    m_Blue = b;
-    m_Alpha = a;
+void BitmapFont::SetColor 
+    (const float& r, const float& g, const float& b, const float& a) {
+    
+    this->SetColor(glm::vec4(r, g, b, a));
 }
 
 void BitmapFont::ReverseYAxis(const bool& State)
 {
-    if (State)
+    if (State || m_InvertYAxis)
         m_YOffset = -m_CellY;
     else
         m_YOffset = m_CellY;
@@ -153,7 +145,7 @@ void BitmapFont::ReverseYAxis(const bool& State)
     m_InvertYAxis = State;
 }
 
-void BitmapFont::Print(const char* text) {
+void BitmapFont::Print(const char* text, float posX, float posY) {
     //texture mapping, top and bottom
     float u, v, u1, v1;
     int row, col;
@@ -168,7 +160,6 @@ void BitmapFont::Print(const char* text) {
     VertexBufferLayout vbl;
     vbl.Push<float>(3);
     vbl.Push<float>(2);
-    vbl.Push<float>(4);
 
     IndexBuffer ib(indices, 6);
 
@@ -183,13 +174,13 @@ void BitmapFont::Print(const char* text) {
         
         float coords[] = {
             //vertex coords			                       //texture	//colors	
-           (m_CurX + m_CellX), (m_CurY + m_YOffset), 0.0f, u1, v,	    m_Red, m_Green, m_Blue, m_Alpha,    //top right
-           (m_CurX + m_CellX),  m_CurY,              0.0f, u1, v1,	    m_Red, m_Green, m_Blue, m_Alpha,    //bottom right
-            m_CurX,             m_CurY,              0.0f, u,  v1,	    m_Red, m_Green, m_Blue, m_Alpha,    //bottom left
-            m_CurX,            (m_CurY + m_YOffset), 0.0f, u,  v,       m_Red, m_Green, m_Blue, m_Alpha     //top left
+           (posX + m_CellX), (posY + m_YOffset), 0.0f, u1, v,  //top right
+           (posX + m_CellX),  posY,              0.0f, u1, v1,  //bottom right
+            posX,             posY,              0.0f, u,  v1,  //bottom left
+            posX,            (posY + m_YOffset), 0.0f, u,  v,   //top left
         };
 
-        m_CurX += m_Width[text[i]];
+        posX += m_Width[text[i]];
 
         VertexArray va;
 
@@ -199,11 +190,6 @@ void BitmapFont::Print(const char* text) {
     }
 
     Unbind();
-}
-
-void BitmapFont::Print(const char* text, const int& x, const int& y) {
-    SetCursor(x, y);
-    Print(text);
 }
 
 void BitmapFont::Bind()
