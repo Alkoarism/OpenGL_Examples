@@ -26,11 +26,11 @@ public:
 	bool Load(const char* fname);
 	int  GetWidth(const char* Text);
 
-	void SetColor(glm::vec4);
+	void SetColor(glm::vec4 color);
 	void SetColor
 		(const float& r, const float& g, const float& b, const float& a = 1.0f);
 	void ReverseYAxis(const bool&);
-	void Print(const char* txt, float x, float y);
+	void Print(const char* txt, float x, float y,const float scale = 1.0f);
 
 private:
 	int m_CellX, m_CellY, m_YOffset, m_RowPitch;

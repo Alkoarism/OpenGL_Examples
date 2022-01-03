@@ -3,7 +3,7 @@
 using namespace std;
 
 BitmapFont::BitmapFont(Shader& s, Texture& t) 
-    : m_Shader(s), m_Texture(t), print_2D(false), m_InvertYAxis(false) {
+    : m_Shader(s), m_Texture(t), m_InvertYAxis(false) {
     this->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
@@ -145,23 +145,29 @@ void BitmapFont::ReverseYAxis(const bool& State)
     m_InvertYAxis = State;
 }
 
-void BitmapFont::Print(const char* text, float posX, float posY) {
+void BitmapFont::Print
+    (const char* text, float posX, float posY, const float scale) {
+
     //texture mapping, top and bottom
     float u, v, u1, v1;
     int row, col;
     size_t sLen = strnlen(text, BFG_MAXSTRING);
 
+    glActiveTexture(GL_TEXTURE0);
     Bind();
+
+    VertexArray vao;
 
     unsigned int indices[] = {
         0, 1, 2,
         0, 2, 3
     };
-    VertexBufferLayout vbl;
-    vbl.Push<float>(3);
-    vbl.Push<float>(2);
-
     IndexBuffer ib(indices, 6);
+
+    VertexBuffer vbo_2D(nullptr, sizeof(float) * 4 * 4);
+    VertexBufferLayout vbl_2D;
+    vbl_2D.Push<float>(4);
+    vao.AddBuffer(vbo_2D, vbl_2D);
 
     for (size_t i = 0; i != sLen; i++) {
         row = (text[i] - m_Base) / m_RowPitch;
@@ -171,22 +177,22 @@ void BitmapFont::Print(const char* text, float posX, float posY) {
         v = row * m_RowFactor;
         u1 = u + m_ColFactor;
         v1 = v + m_RowFactor;
-        
-        float coords[] = {
-            //vertex coords			                       //texture	//colors	
-           (posX + m_CellX), (posY + m_YOffset), 0.0f, u1, v,  //top right
-           (posX + m_CellX),  posY,              0.0f, u1, v1,  //bottom right
-            posX,             posY,              0.0f, u,  v1,  //bottom left
-            posX,            (posY + m_YOffset), 0.0f, u,  v,   //top left
+
+        float w = m_CellX * scale;
+        float h = m_CellY * scale;
+
+        float vertices_2D[] = {
+            //vertex data                   //texture	
+            (posX + w),     (posY + h),     u1, v,      //top right
+            (posX + w),      posY,          u1, v1,     //bottom right
+             posX,           posY,          u,  v1,     //bottom left
+             posX,          (posY + h),     u,  v,      //top left
         };
 
-        posX += m_Width[text[i]];
+        posX += m_Width[text[i]] * scale;
 
-        VertexArray va;
-
-        VertexBuffer vb(coords, sizeof(coords));
-        va.AddBuffer(vb, vbl);
-        Renderer::Render(va, ib, m_Shader);
+        vbo_2D.Update(vertices_2D, sizeof(vertices_2D), 0);
+        Renderer::Render(vao, ib, m_Shader);
     }
 
     Unbind();

@@ -1,6 +1,9 @@
 #include "OpenGL\renderer.h"
 #include "OpenGL\camera.h"
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include "bitmap_font.h"
 
 using std::vector;
@@ -125,25 +128,21 @@ int main() {
 		0.0f, static_cast<float>(screenHeight), 
 		0.0f, static_cast<float>(screenWidth));
 
-	std::string shaderName = "main2D";
-	Shader& main2D = Renderer::LoadShader(
-		shaderName,
+	Shader& freetype2D = Renderer::LoadShader(
+		"freetype2D",
 		"res\\shaders\\main2D.vert",
 		"res\\shaders\\freetype2D.frag"
 	);
-	main2D.SetUniform("projection", projection);
-	main2D.SetUniform("model", model);
+	freetype2D.SetUniform("projection", projection);
+	freetype2D.SetUniform("model", model);
 
-	std::string bitmapShader = "bitmap2D";
 	Shader& bitmap2D = Renderer::LoadShader(
-		bitmapShader,
-		"res\\shaders\\bitmap_vert.shader",
-		"res\\shaders\\bitmap_frag.shader"
+		"bitmap2D",
+		"res\\shaders\\main2D.vert",
+		"res\\shaders\\bitmap2D.frag"
 	);
-	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 1.0f));
-	bitmap2D.SetUniform("model", model);
-	bitmap2D.SetUniform("view", view);
 	bitmap2D.SetUniform("projection", projection);
+	bitmap2D.SetUniform("model", model);
 
 	VAO.reset(new VertexArray());
 	VBO.reset(new VertexBuffer(nullptr, sizeof(float) * 4 * 4, GL_DYNAMIC_DRAW));
@@ -159,7 +158,6 @@ int main() {
 
 	BitmapFont font(bitmap2D, Renderer::LoadTexture("BitmapTexture"));
 	font.Load("res\\bitmap\\timesNewRoman.bff");
-	font.print_2D = true;
 
 	// render loop (happens every frame) -----------------------------------------
 	while (!glfwWindowShouldClose(window)) {
@@ -175,11 +173,11 @@ int main() {
 			sin(glfwGetTime()),
 			sin(glfwGetTime() - (2 * 3.14 / 3)),
 			1.0f));
-		font.Print("BitmapFont sample text.", 10.0f, 50.0f);
-		font.Print("(C) LearnOpenGL.com", 200.0f, 250.0f);
+		font.Print("BitmapFont sample text.", 25.0f, 75.0f, 2.0f);
+		font.Print("(C) LearnOpenGL.com", 540.0f, 495.0f, 1.5f);
 
-		RenderText(main2D, "Freetype sample text.", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		RenderText(main2D, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+		RenderText(freetype2D, "Freetype sample text.", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		RenderText(freetype2D, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
 		// -> check and call events and swap the buffers
 		glfwSwapBuffers(window);

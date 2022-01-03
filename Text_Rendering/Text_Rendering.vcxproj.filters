@@ -104,14 +104,8 @@
   <ItemGroup>
     <None Include="freetype.dll" />
     <None Include="res\shaders\freetype2D.frag" />
-    <None Include="res\shaders\bitmap_frag.shader" />
-    <None Include="res\shaders\bitmap_frag2D.shader" />
-    <None Include="res\shaders\bitmap_vert.shader" />
-    <None Include="res\shaders\bitmap_vert2D.shader" />
-    <None Include="res\shaders\freetype2D.vert" />
-    <None Include="res\shaders\main_frag.shader" />
-    <None Include="res\shaders\main_vert.shader" />
     <None Include="res\shaders\main2D.frag" />
     <None Include="res\shaders\main2D.vert" />
+    <None Include="res\shaders\bitmap2D.frag" />
   </ItemGroup>
 </Project>
