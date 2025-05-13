@@ -1,6 +1,6 @@
-#include "OpenGL\renderer.h"
-#include "OpenGL\camera.h"
-#include "OpenGL\texture.h"
+#include "OpenGL/renderer.h"
+#include "OpenGL/camera.h"
+#include "OpenGL/texture.h"
 
 #include "bitmap_font.h"
 
