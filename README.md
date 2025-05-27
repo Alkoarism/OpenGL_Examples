@@ -1,5 +1,3 @@
-# LittleBigEngine
-A game engine project for forking in various side projects including maths and physics simulations and some games here and there.
-
-## OpenGL Examples
-A list of template projects based on each studied chapter of the "Learn OpenGL" course.
+# OpenGL Examples
+A list of projects based on each studied chapter of the "Learn OpenGL" course.
+This is a collection of results made viable via development of the LittleBigEngine at various points of the project.
