@@ -1,3 +1,6 @@
-# OpenGL Examples
-A list of projects based on each studied chapter of the "Learn OpenGL" course.
-This is a collection of results made viable via development of the LittleBigEngine at various points of the project.
+# LittleBigEngine
+Here are contained, as off today, all current and previous versions of the engine.\
+
+Each version has a small demo attached to it in order to showcase what´s been added.\
+The various versions so far are all being based mainly on the chapters of the
+[Learn OpenGL] (https://learnopengl.com/) website with some exceptions (e.g. the sound one).
