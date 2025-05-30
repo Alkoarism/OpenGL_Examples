@@ -12,7 +12,6 @@ CXX := x86_64-w64-mingw32-g++
 CXXFLAGS := -O2 -static-libstdc++ $(INCLUDES) $(WIN_INCLUDES)
 
 # Flags
-
 FREETYPE_LIB := -lfreetype
 OPENGLFLAGS := $(FREETYPE_LIB) -lglfw3 -lopengl32 -lgdi32 -luser32 -lkernel32
 #CXXFLAGS := -Wall -Wextra -Werror -g -O2
@@ -43,16 +42,16 @@ $(EXEC): $(OBJS) | $(BINDIR)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $@ $(OPENGLFLAGS)
 
 # Compile .c to .o
-$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)/%/
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | prepare-dirs
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 # Compile .cpp to .o
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)/%/
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | prepare-dirs
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(OPENGLFLAGS)
 
 # Ensure bin/ and obj/ exist
-$(OBJDIR)/%/:
-	mkdir -p $@
+prepare-dirs:
+	mkdir -p $(sort $(dir $(OBJS)))
 
 $(BINDIR):
 	mkdir -p $@
