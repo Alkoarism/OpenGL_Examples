@@ -11,13 +11,18 @@ using std::vector;
 // function declarations ------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow*, int, int);
 void key_callback(GLFWwindow*, int, int, int, int);
+
+/* Freetype and text related code - Temporarily disabled
 void RenderText(Shader&, std::string, float, float, float, glm::vec3);
+*/
 
 // global variables -----------------------------------------------------------
 const int screenWidth = 600, screenHeight = 800;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
+
+/* Freetype and text related code - Temporarily disabled
 struct Character {
 	Texture& texture;
 	glm::ivec2 size;
@@ -29,6 +34,7 @@ std::map<char, Character> characters;
 std::unique_ptr<VertexArray> VAO;
 std::unique_ptr<VertexBuffer> VBO;
 std::unique_ptr<IndexBuffer> IBO;
+*/
 
 int main() {
 	// glfw: initialize and configure --------------------------------------------
@@ -43,7 +49,7 @@ int main() {
 
 	// glfw: window creation and setup -------------------------------------------
 	GLFWwindow* window = glfwCreateWindow
-		(screenWidth,  screenHeight, "OpenGL Space_Invaders_Clone", NULL, NULL);
+		(screenWidth,  screenHeight, "OpenGL LittleBigEngine-v0.04.00", NULL, NULL);
 	if (!window) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -61,9 +67,10 @@ int main() {
 		return -1;
 	}
 
-	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	/* Freetype and text related code - Temporarily disabled
 	// freetype: font loading and setup ------------------------------------------
 	FT_Library ft;
 	if (FT_Init_FreeType(&ft)) {
@@ -158,6 +165,7 @@ int main() {
 
 	BitmapFont font(bitmap2D, Renderer::LoadTexture("BitmapTexture"));
 	font.Load("res\\bitmap\\timesNewRoman.bff");
+	*/
 
 	// render loop (happens every frame) -----------------------------------------
 	while (!glfwWindowShouldClose(window)) {
@@ -165,19 +173,29 @@ int main() {
 		Renderer::FrameTimeTracker();
 
 		// -> rendering commands and configuration
-		Renderer::RenderConfig(0.2f, 0.4f, 0.2f, 1.0f);
+		Renderer::RenderConfig((sin(glfwGetTime()) + 1)/2, 0.4f, 0.2f, 1.0f);
+		//+1 makes sin vary between 2 and 0, ividing by 2 we keep the variation between 1 and 0.
 
 		// ---> space configurations and rendering
+
+		/* Freetype and text related code - Temporarily disabled
 		font.SetColor(glm::vec4(
 			sin(glfwGetTime() + (2 * 3.14 / 3)),
 			sin(glfwGetTime()),
 			sin(glfwGetTime() - (2 * 3.14 / 3)),
 			1.0f));
 		font.Print("BitmapFont sample text.", 25.0f, 75.0f, 2.0f);
+
+		font.SetColor(glm::vec4(
+			sin(glfwGetTime() - (2 * 3.14 / 3)),
+			sin(glfwGetTime()),
+			sin(glfwGetTime() + (2 * 3.14 / 3)),
+			1.0f));
 		font.Print("(C) LearnOpenGL.com", 540.0f, 495.0f, 1.5f);
 
 		RenderText(freetype2D, "Freetype sample text.", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 		RenderText(freetype2D, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+		*/
 
 		// -> check and call events and swap the buffers
 		glfwSwapBuffers(window);
@@ -197,6 +215,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
+/* Freetype and text related code - Temporarily disabled
 void RenderText(Shader& s, std::string text, float x, float y, float scale, glm::vec3 color) {
 	s.SetUniform("textColor", color);
 	glActiveTexture(GL_TEXTURE0);
@@ -229,3 +248,4 @@ void RenderText(Shader& s, std::string text, float x, float y, float scale, glm:
 		x += (ch.advance >> 6) * scale; //bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 }
+*/
