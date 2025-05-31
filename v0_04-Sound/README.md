@@ -35,8 +35,8 @@ ProcessKeyBoard() expects a direction from the Camera_Movement enum: *FORWARD*, 
 >:warning: The camera class __does not define which key is responsible for each direction__, that must be handled by the user´s code. A valid diretion command would look as follows:
 
 ```C++
-if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	glfwSetWindowShouldClose(window, true)
+if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	camera.ProcessKeyboard(FORWARD, Renderer::GetDeltaTime());
 ```
 
 ProcessMouseMovement() updates the camera angles based on mouse delta (how much it moved between renderings).\
