@@ -74,9 +74,9 @@ void Update(const void* data, unsigned int size, unsigned int offset);
 
 *size* byte size of the _data_ container.
 
-*offset* byte size of the vector data to be updated on the buffer from whitch to start changing values.
+*offset* byte size of the vector data to be updated on the buffer from which to start changing values.
 
-A key point is that, while the constructor creates a VBO to store all the vertex data of any object, the Update() function can change a chunk of data points at each vector set. An example of usage would be as follows, where the aim is to pass an array to modify 32 values óut of 1000 vertices that ocupy 32 bytes each, stored into a previously created VBO:
+A key point is that, while the constructor creates a VBO to store all the vertex data of any object, the Update() function can change a chunk of data points at each vector set. An example of usage would be as follows, where the aim is to pass an array to modify 32 values out of 1000 vertices that ocupy 32 bytes each, stored into a previously created VBO:
 
 ```C++
 unsigned int vertexSize = 32
@@ -87,10 +87,10 @@ vb.Update(newData, vertexSize, offSet)
 ```
 
 >[!CAUTION]
->Don’t mix different vertex formats in a single VBO.
+>Different vertex formats shoudn´t be mixed in a single VBO.
 
 >[!TIP]
->You can update multiple vertices at once by passing a larger size and setting offset to the appropriate start position.
+>Multiple vertices can be changed at once by passing a larger size and setting offset to the appropriate start position.
 
 The VBL class is a helper to avoid having to continously pass information about the data into a VBO with every draw call. In these are stored the stride values for every vertex data set on any VBO. A Push() function is provided for this with type safety baked into it to avoid conflict with *GLtypes* vs *C++ types* (currently includes *float* and *int*).
 
@@ -114,27 +114,27 @@ void AddBuffer(const VertexBuffer&, const VertexBufferLayout&);
 
 A single VAO may contain as many vertex data/layout pairs as desired. As a rule of thumb, each VBO/VBL should be responsible for storing a single mesh while a VAO might store an entire scene.
 
-IBOs can be used optionally to reduce vertex data repetition and improve performance by defining which vertex points should be used to render which triangles. It´s constructor receives a pointer to the array of index values and the number of elements.
+IBOs can be used optionally to reduce vertex data repetition and improve performance by defining which vertex points should be used to render which triangles. Its constructor receives a pointer to the array of index values and the number of elements.
 
 ```C++
 IndexBuffer(const GLuint* data,const GLuint size);
 ```
 
 Internally each buffer class:
-- Automatically generates a unique GPU resource ID in it´s constructor;
-- Implements move constructors and move assignment to transfer ownership of the OpenGL object, transfering ownership and invelidating the source buffer to prevent double deletion or reuse;
+- Automatically generates a unique GPU resource ID in its constructor;
+- Implements move constructors and move assignment to transfer ownership of the OpenGL object, transfering ownership and invalidating the source buffer to prevent double deletion or reuse;
 - Disables copy semantics to avoid unintended ID duplication, which would otherwise result in undefined behavior or OpenGL errors;
 - Uses destructors to safely delete GPU-side resources, ensuring proper cleanup and avoiding memory/resource leaks;
 - Provides Bind() and Unbind() methods for explicit state control during setup and rendering.
 
 >[!NOTE]
->When attributing vertex data info into an VAO there´s no need to use Bind() as it´s make automatically. Unbind() should be used if the need to deal with other VAO´s arise.
+>When attributing vertex data info into an VAO there´s no need to use Bind() as its executed internally. Unbind() should be used if the need to deal with other VAO´s arise.
 
 As an example, a simple setup for rendering a cube with normal and UV data would be as follows:
 
 ```C++
 std::vector<float> cube_vData = {ALL_THE_CUBE_DATA};
-std:vector<unsigned int> indices = {INDEX_DATA};
+std::vector<unsigned int> indices = {INDEX_DATA};
 
 VertexArray cube_va;
 cube_va.Bind();
