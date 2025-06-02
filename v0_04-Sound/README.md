@@ -1,7 +1,17 @@
 # Sound
 In this version, there are a few objectives for the project:
-- [ ] Make sense of the core engine
-- [ ] Sketch a preliminary documentation
+- [:o:] Make sense of the core engine
+- [:o:] Sketch a preliminary documentation
+	- [:heavy_check_mark:] Camera
+	- [:heavy_check_mark:] IBO´s, VBO´s, VBL´s and VAO´s
+	- [:o:] Texture
+	- [ ] Shaders
+	- [ ] Renderer
+
+	- [ ] Bitmap-Font
+	- [ ] Entity
+	- [ ] Sprite-Renderer
+	- [ ] Freetype
 - [ ] Implement sound on the core engine
 
 This README by itself will be used as such sketch in order to facilitate future understanding of the inner workings of the engine. Thus:
@@ -149,9 +159,10 @@ cube_va.AddBuffer(cube_vb, cube_vbl);
 IndexBuffer ib(&indices[0], indices.size());
 ```
 
-#### Renderer
-#### Shader
 #### Texture
+
+#### Shader
+#### Renderer
 
 ### Modules:
 #### Bitmap Font
