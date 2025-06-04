@@ -6,8 +6,6 @@
 
 #include "bitmap_font.h"
 
-using std::vector;
-
 // function declarations ------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow*, int, int);
 void key_callback(GLFWwindow*, int, int, int, int);
@@ -17,7 +15,7 @@ void RenderText(Shader&, std::string, float, float, float, glm::vec3);
 */
 
 // global variables -----------------------------------------------------------
-const int screenWidth = 600, screenHeight = 800;
+const int screenWidth = 900, screenHeight = 800;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -166,6 +164,109 @@ int main() {
 	BitmapFont font(bitmap2D, Renderer::LoadTexture("BitmapTexture"));
 	font.Load("res\\bitmap\\timesNewRoman.bff");
 	*/
+
+	/* Vertex data testing - Disabled due to texture and shader rebuild
+	// vertices definition -------------------------------------------------------
+	std::vector<float> cube_vData = {
+		//vertex			  //Vertex Normal		//texture	r	
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	// 0
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	1.0f, 0.0f,	// 1
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	// 2
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	0.0f, 1.0f,	// 3
+
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,	0.0f, 0.0f,	// 4
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,	1.0f, 0.0f,	// 5
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	// 6
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,	0.0f, 1.0f,	// 7
+
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	// 8
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	// 9
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	// 10
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	// 11
+
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	// 12
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	// 13
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	// 14
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	// 15
+
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,	// 16
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	// 17
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,	// 18
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	// 19
+
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	// 20
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 1.0f,	// 21
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	// 22
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,	0.0f, 0.0f	// 23
+	};
+	
+	std::vector<float> light_vData = {
+		//vertex			  //texture		
+		-0.5f, -0.5f, -0.5f,	// 0
+		 0.5f, -0.5f, -0.5f,	// 1
+		 0.5f,  0.5f, -0.5f,	// 2
+		-0.5f,  0.5f, -0.5f,	// 3
+
+		-0.5f, -0.5f,  0.5f,	// 4
+		 0.5f, -0.5f,  0.5f,	// 5
+		 0.5f,  0.5f,  0.5f,	// 6
+		-0.5f,  0.5f,  0.5f,	// 7
+
+		-0.5f,  0.5f,  0.5f,	// 8
+		-0.5f,  0.5f, -0.5f,	// 9
+		-0.5f, -0.5f, -0.5f,	// 10
+		-0.5f, -0.5f,  0.5f,	// 11
+
+		 0.5f,  0.5f,  0.5f,	// 12
+		 0.5f,  0.5f, -0.5f,	// 13
+		 0.5f, -0.5f, -0.5f,	// 14
+		 0.5f, -0.5f,  0.5f,	// 15
+
+		-0.5f, -0.5f, -0.5f,	// 16
+		 0.5f, -0.5f, -0.5f,	// 17
+		 0.5f, -0.5f,  0.5f,	// 18
+		-0.5f, -0.5f,  0.5f,	// 19
+
+		-0.5f,  0.5f, -0.5f,	// 20
+		 0.5f,  0.5f, -0.5f,	// 21
+		 0.5f,  0.5f,  0.5f,	// 22
+		-0.5f,  0.5f,  0.5f		// 23
+	};
+
+	std::vector<unsigned int> indices = {
+		//cube faces
+		0, 1, 2,		0, 3, 2,
+		4, 5, 6,		4, 7, 6,
+		8, 9, 10,		8, 11, 10,
+		12, 13, 14,		12, 15, 14,
+		16, 17, 18,		16, 19, 18,
+		20, 21, 22,		20, 23, 22
+	};
+
+
+	// vertex and buffers configurations -----------------------------------------
+	VertexArray light_va, cube_va;
+
+	light_va.Bind();
+	VertexBuffer light_vb(light_vData.data(), sizeof(decltype(light_vData[0])) * light_vData.size());
+	VertexBufferLayout light_vbl;
+	light_vbl.Push<float>(3);
+	light_va.AddBuffer(light_vb, light_vbl);
+	
+	cube_va.Bind();
+	VertexBuffer cube_vb(cube_vData.data(), sizeof(decltype(cube_vData[0])) * cube_vData.size());
+	VertexBufferLayout cube_vbl;
+	cube_vbl.Push<float>(3);
+	cube_vbl.Push<float>(3);
+	cube_vbl.Push<float>(2);
+	cube_va.AddBuffer(cube_vb, cube_vbl);
+
+	IndexBuffer ib(&indices[0], indices.size());
+	*/
+
+	// texture handling ----------------------------------------------------------
+
+	// initialization before rendering -------------------------------------------
 
 	// render loop (happens every frame) -----------------------------------------
 	while (!glfwWindowShouldClose(window)) {

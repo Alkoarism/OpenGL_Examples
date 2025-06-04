@@ -1,10 +1,10 @@
 # Sound
 In this version, there are a few objectives for the project:
-- :o: Make sense of the core engine
-- :o: Sketch a preliminary documentation
-	- :heavy_check_mark: Camera
-	- :heavy_check_mark: IBO´s, VBO´s, VBL´s and VAO´s
-	- :o: Texture
+- Make sense of the core engine :o:
+- Sketch a preliminary documentation :o:
+	- Camera :heavy_check_mark:
+	- IBO´s, VBO´s, VBL´s and VAO´s :heavy_check_mark:
+	- Texture :o:
 	- Shaders
 	- Renderer
 
@@ -15,6 +15,16 @@ In this version, there are a few objectives for the project:
 - Implement sound on the core engine
 
 This README by itself will be used as such sketch in order to facilitate future understanding of the inner workings of the engine. Thus:
+
+## Sound Implementation Notes
+- v0.04.00: README refactoring
+- v0.04.01: Rebuild Texture Class
+- v0.04.02: Rebuild bitmap_font class
+- v0.04.03: Add Freetype implementation class
+- v0.04.04: Inclusion of Bitmap and Freetype as modules of the core engine
+- v0.04.05: Add OpenAL sound API
+- v0.04.06: Implement sound class
+- v0.04.07: Inclusion of sound class as part of the core engine
 
 ## Core engine Documentation
 The engine is structured mainly with an DOP desing in mind.
@@ -82,7 +92,7 @@ void Update(const void* data, unsigned int size, unsigned int offset);
 
 *data* should be passed as a C-style array, as OpenGL expects raw memory pointers. However, it is fine to store the data as standard C++ containers for reference when needed. 
 
-*size* byte size of the _data_ container.
+*size* byte size of the _data_ container (e.g. _type_ * _n of values on the container_).
 
 *offset* byte size of the vector data to be updated on the buffer from which to start changing values.
 
@@ -169,10 +179,6 @@ IndexBuffer ib(&indices[0], indices.size());
 #### Freetype Font
 #### Entity
 #### Sprite Renderer
-
-## Sound Implementation Notes
-- v0.04.00: README refactoring
-- v0.04.01: Inclusion of Bitmap and Freetype as modules of the core engine
 
 # References
 External sources:
