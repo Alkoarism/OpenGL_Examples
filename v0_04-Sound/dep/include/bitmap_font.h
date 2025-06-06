@@ -1,7 +1,7 @@
 #ifndef _BITMAP_FONTCLASS_H
 #define _BITMAP_FONTCLASS_H
 
-#include "OpenGL\renderer.h"
+#include "OpenGL/renderer.h"
 
 #define BFG_MAXSTRING 255     // Maximum string length
 

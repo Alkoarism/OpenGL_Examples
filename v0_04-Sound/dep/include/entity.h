@@ -1,7 +1,7 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "OpenGL\renderer.h"
+#include "OpenGL/renderer.h"
 
 #include "sprite_renderer.h"
 

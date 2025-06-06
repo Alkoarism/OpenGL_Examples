@@ -36,12 +36,6 @@ public:
 		static_assert(false);
 	}
 
-	template<>
-	void Push<float>(const int count) {
-		m_Elements.push_back(VertexAttribute(GL_FLOAT, count, GL_FALSE));
-		m_Stride += count * VertexAttribute::GetSizeOfType(GL_FLOAT);
-	}
-
 	inline const std::vector<VertexAttribute> GetElements() const { return m_Elements; }
 	inline unsigned int GetStride() const { return m_Stride; }
 
@@ -49,5 +43,17 @@ private:
 	std::vector<VertexAttribute> m_Elements;
 	unsigned int m_Stride;
 };
+
+template<>
+inline void VertexBufferLayout::Push<float>(const int count) {
+	m_Elements.push_back(VertexAttribute(GL_FLOAT, count, GL_FALSE));
+	m_Stride += count * VertexAttribute::GetSizeOfType(GL_FLOAT);
+}
+
+template<>
+inline void VertexBufferLayout::Push<int>(const int count) {
+	m_Elements.push_back(VertexAttribute(GL_INT, count, GL_FALSE));
+	m_Stride += count * VertexAttribute::GetSizeOfType(GL_INT);
+}
 
 #endif

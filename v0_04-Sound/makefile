@@ -1,8 +1,8 @@
 .PHONY = all clean
 
 # Includes path
-INCLUDES := -Idep/include_linux
-WIN_INCLUDES := -Ldep/lib_linux
+INCLUDES := -Idep/include
+WIN_INCLUDES := -Ldep/lib
 
 # Compilers and linker
 CC := x86_64-w64-mingw32-gcc

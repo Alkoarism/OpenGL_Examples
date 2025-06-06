@@ -1,7 +1,7 @@
 #ifndef SPRITE_RENDERER_H
 #define SPRITE_RENDERER_H
 
-#include "OpenGL\renderer.h"
+#include "OpenGL/renderer.h"
 
 class SpriteRenderer {
 public:

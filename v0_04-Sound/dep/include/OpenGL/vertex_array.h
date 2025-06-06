@@ -1,8 +1,8 @@
 #ifndef VERTEX_ARRAY_H
 #define VERTEX_ARRAY_H
 
-#include "OpenGL\vertex_buffer.h"
-#include "OpenGL\vertex_buffer_layout.h"
+#include "OpenGL/vertex_buffer.h"
+#include "OpenGL/vertex_buffer_layout.h"
 
 class VertexArray {
 public:
