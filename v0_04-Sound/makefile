@@ -1,7 +1,8 @@
 .PHONY = all clean
 
 # Includes path
-INCLUDES := -Idep/include
+FREETYPE_INCLUDE := -Idep/include/Modules/glyphLoader/
+INCLUDES := -Idep/include $(FREETYPE_INCLUDE)
 WIN_INCLUDES := -Ldep/lib
 
 # Compilers and linker

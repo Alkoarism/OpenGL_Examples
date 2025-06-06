@@ -4,7 +4,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "bitmap_font.h"
+#include "Modules/glyphLoader/bitmap_font.h"
 
 // function declarations ------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow*, int, int);
@@ -65,7 +65,7 @@ int main() {
 		return -1;
 	}
 
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	/* Freetype and text related code - Temporarily disabled
@@ -275,7 +275,6 @@ int main() {
 
 		// -> rendering commands and configuration
 		Renderer::RenderConfig((sin(glfwGetTime()) + 1)/2, 0.4f, 0.2f, 1.0f);
-		//+1 makes sin vary between 2 and 0, ividing by 2 we keep the variation between 1 and 0.
 
 		// ---> space configurations and rendering
 
