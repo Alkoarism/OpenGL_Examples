@@ -7,6 +7,8 @@
 #include "OpenGL/shader.h"
 #include "OpenGL/texture.h"
 
+#include "Modules/imgLoader/imgLoader.h"
+
 class Renderer {
 public:
 	static bool render3D;

@@ -1,10 +1,5 @@
 #include "OpenGL/renderer.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <Modules/imgLoader/stb_image.h>
-#define STBI_FAILURE_USERMSG
-#define STBI_ONLYJPEG
-
 void Renderer::Render
 	(const VertexArray& va, const IndexBuffer& ib, const Shader& s) {
 		va.Bind();
@@ -74,22 +69,14 @@ Texture& Renderer::LoadTexture
         textures.at(name).format = GL_RGBA;
     }
 
-    if (flipImage)
-        stbi_set_flip_vertically_on_load(flipImage);
-
-    int imgWidth, imgHeight, nrChannels;
-    unsigned char* data
-        = stbi_load(file, &imgWidth, &imgHeight, &nrChannels, 0);
-    if (data) {
-        textures.at(name).Load(data, imgWidth, imgHeight);
+    ImgLoader img(file);
+    if (img.GetLog() == nullptr) {
+        textures.at(name).Load(img.GetData(), img.GetWidth(), img.GetHeight());
     }
     else {
-        const char* failLog = stbi_failure_reason();
         std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE: "
-            << name << "\n" << failLog << std::endl;
+            << name << "\n" << img.GetLog() << std::endl;
     }
-    stbi_image_free(data);
-
     return textures.at(name);
 }
 
