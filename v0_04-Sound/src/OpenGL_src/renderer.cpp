@@ -6,6 +6,12 @@ void Renderer::Render
 		ib.Bind();
         s.Use();
 
+        if (render3D){
+            s.SetUniform("projection", projection);
+		    s.SetUniform("view", view);
+		    s.SetUniform("model", model);
+        }
+
 		glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, 0);
 	}
 
@@ -108,5 +114,8 @@ Texture& Renderer::GetTexture(const std::string name) {
 bool Renderer::render3D = false;
 float Renderer::lastFrame = 0.0f;
 float Renderer::deltaTime = 0.0f;
+glm::mat4 Renderer::projection = glm::mat4(1.0f);
+glm::mat4 Renderer::view = glm::mat4(1.0f);
+glm::mat4 Renderer::model = glm::mat4(1.0f);
 std::map<std::string, Shader> Renderer::shaders;
 std::map<std::string, Texture> Renderer::textures;

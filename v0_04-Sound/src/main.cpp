@@ -15,9 +15,9 @@ void RenderText(Shader&, std::string, float, float, float, glm::vec3);
 //*/
 
 // global variables -----------------------------------------------------------
-const int screenWidth = 900, screenHeight = 800;
+const int screenWidth = 600, screenHeight = 800;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
 
 ///* Freetype and text related code - Temporarily disabled
@@ -152,17 +152,17 @@ int main() {
 	VBL.Push<float>(4);
 	VAO->AddBuffer(*VBO, VBL);
 
-	unsigned int indices[] = {
+	unsigned int textIndices[] = {
 		0, 1, 2,
 		0, 2, 3
 	};
-	IBO.reset(new IndexBuffer(indices, 6));
+	IBO.reset(new IndexBuffer(textIndices, 6));
 
 	BitmapFont font(bitmap2D, Renderer::LoadTexture("BitmapTexture"));
 	font.Load("res\\bitmap\\timesNewRoman.bff");
 	//*/
 
-	/* Vertex data testing - Disabled due to texture and shader rebuild
+	///* Vertex data testing - Disabled due to texture and shader rebuild
 	// vertices definition -------------------------------------------------------
 	std::vector<float> cube_vData = {
 		//vertex			  //Vertex Normal		//texture	r	
@@ -230,7 +230,7 @@ int main() {
 		-0.5f,  0.5f,  0.5f		// 23
 	};
 
-	std::vector<unsigned int> indices = {
+	std::vector<unsigned int> vertexIndices = {
 		//cube faces
 		0, 1, 2,		0, 3, 2,
 		4, 5, 6,		4, 7, 6,
@@ -258,28 +258,62 @@ int main() {
 	cube_vbl.Push<float>(2);
 	cube_va.AddBuffer(cube_vb, cube_vbl);
 
-	IndexBuffer ib(&indices[0], indices.size());
-	*/
+	IndexBuffer ib(&vertexIndices[0], vertexIndices.size());
+	//*/
 
 	// texture handling ----------------------------------------------------------
 
 	// initialization before rendering -------------------------------------------
+	Renderer::LoadShader("light_shader", "res\\shaders\\lightSource.vert", "res\\shaders\\lightSource.frag");
+	
+	Renderer::LoadShader("test_shader", "res\\shaders\\test.vert", "res\\shaders\\test.frag");
+	Renderer::GetShader("test_shader").SetUniform("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+	Renderer::GetShader("test_shader").SetUniform("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
+	Renderer::GetShader("test_shader").SetUniform("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+	Renderer::GetShader("test_shader").SetUniform("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+	Renderer::GetShader("test_shader").SetUniform("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+	Renderer::GetShader("test_shader").SetUniform("material.shininess", 32.0f);
+
+	Renderer::GetShader("test_shader").SetUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+	Renderer::GetShader("test_shader").SetUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+	Renderer::GetShader("test_shader").SetUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 	// render loop (happens every frame) -----------------------------------------
 	while (!glfwWindowShouldClose(window)) {
 		// -> frame time tracker
 		Renderer::FrameTimeTracker();
 
-		// -> rendering commands and configuration
-		Renderer::RenderConfig((sin(glfwGetTime()) + 1)/2, 0.4f, 0.2f, 1.0f);
-
-		// ---> space configurations and rendering
+		// --> space configurations and rendering
+		Renderer::SetRender3D(true);
+		Renderer::RenderConfig(.5f, .5f, .5f);
 		glEnable(GL_DEPTH_TEST);
+		
+		// ---> world config
+		glm::mat4 projection = glm::perspective
+		(glm::radians(camera.Zoom), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+		Renderer::SetProjection(projection);
 
+		// ---> camera config
+		glm::mat4 view = camera.GetViewMatrix();
+		Renderer::SetView(view);
+		Renderer::GetShader("test_shader").SetUniform("viewPos", camera.Position);
 
-		glDisable(GL_DEPTH_TEST);
+		// ---> model positioning
+		glm::mat4 model = glm::mat4(1.0f);
+		Renderer::SetModel(model);
+		Renderer::Render(cube_va, ib, Renderer::GetShader("test_shader"));
+
+		glm::vec3 lightPos(1.5 * sin(glfwGetTime()), 1.0f, 1.5 * cos(glfwGetTime()));
+		Renderer::GetShader("test_shader").SetUniform("light.position", lightPos);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f));
+		Renderer::SetModel(model);
+		Renderer::Render(light_va, ib, Renderer::GetShader("light_shader"));
+
+		//glDisable(GL_DEPTH_TEST);
 
 		///* Freetype and text related code - Temporarily disabled
+		Renderer::SetRender3D(false);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -301,7 +335,7 @@ int main() {
 		RenderText(freetype2D, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 		glDisable(GL_BLEND);
 		//*/
-
+		
 		// -> check and call events and swap the buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
