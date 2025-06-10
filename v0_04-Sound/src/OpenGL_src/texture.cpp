@@ -31,7 +31,7 @@ Texture& Texture::operator=(Texture&& other) noexcept {
 void Texture::Load(const void* texture, const int& width,const int& height) {
 	glTexImage2D(this->type, 0, this->format, width, height,
 		0, this->format, GL_UNSIGNED_BYTE, texture);
-	glGenerateMipmap(this->format);
+	glGenerateMipmap(this->type);
 	
 	if (texture == nullptr)
 		std::cout << "ERROR::TEXTURE::UNDEFINED_TEXT_PTR" << std::endl;

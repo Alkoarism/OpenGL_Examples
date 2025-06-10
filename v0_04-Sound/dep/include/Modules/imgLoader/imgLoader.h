@@ -6,6 +6,7 @@
 class ImgLoader{
 public:
     ImgLoader(const char* location, bool flipImage = true);
+    ~ImgLoader();
     
     inline unsigned char* GetData() const { return m_data; }
     inline int GetWidth() const { return m_imgWidth; }

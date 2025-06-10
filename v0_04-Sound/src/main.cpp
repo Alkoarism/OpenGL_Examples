@@ -7,8 +7,11 @@
 #include "Modules/glyphLoader/bitmap_font.h"
 
 // function declarations ------------------------------------------------------
+void processInput(GLFWwindow* window);
+
 void framebuffer_size_callback(GLFWwindow*, int, int);
-void key_callback(GLFWwindow*, int, int, int, int);
+void mouse_callback(GLFWwindow* window, double xPos, double yPos);
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 
 ///* Freetype and text related code - Temporarily disabled
 void RenderText(Shader&, std::string, float, float, float, glm::vec3);
@@ -18,7 +21,9 @@ void RenderText(Shader&, std::string, float, float, float, glm::vec3);
 const int screenWidth = 600, screenHeight = 800;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
-
+float lastX = screenWidth / 2, lastY = screenHeight / 2;
+float fov = 45.0;
+bool firstMouse = true;
 
 ///* Freetype and text related code - Temporarily disabled
 struct Character {
@@ -57,7 +62,10 @@ int main() {
 	// glfw: setup
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// glad: load all OpenGL function pointers
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -262,55 +270,74 @@ int main() {
 	//*/
 
 	// texture handling ----------------------------------------------------------
+	Texture& container = Renderer::LoadTexture("container", "res\\textures\\container.jpg", true);
+
+	container.SetPar(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	container.SetPar(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	container.SetPar(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	container.SetPar(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// initialization before rendering -------------------------------------------
-	Renderer::LoadShader("light_shader", "res\\shaders\\lightSource.vert", "res\\shaders\\lightSource.frag");
+	Shader& light_shader = Renderer::LoadShader(
+		"light_shader", 
+		"res\\shaders\\lightSource.vert", 
+		"res\\shaders\\lightSource.frag");
 	
-	Renderer::LoadShader("test_shader", "res\\shaders\\test.vert", "res\\shaders\\test.frag");
-	Renderer::GetShader("test_shader").SetUniform("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-	Renderer::GetShader("test_shader").SetUniform("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+	Shader& test_shader = Renderer::LoadShader(
+		"test_shader", 
+		"res\\shaders\\test.vert", 
+		"res\\shaders\\test.frag");
 
-	Renderer::GetShader("test_shader").SetUniform("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-	Renderer::GetShader("test_shader").SetUniform("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-	Renderer::GetShader("test_shader").SetUniform("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-	Renderer::GetShader("test_shader").SetUniform("material.shininess", 32.0f);
+	test_shader.SetUniform("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+	test_shader.SetUniform("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
-	Renderer::GetShader("test_shader").SetUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-	Renderer::GetShader("test_shader").SetUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-	Renderer::GetShader("test_shader").SetUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	test_shader.SetUniform("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+	test_shader.SetUniform("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+	test_shader.SetUniform("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+	test_shader.SetUniform("material.shininess", 32.0f);
+
+	test_shader.SetUniform("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+	test_shader.SetUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+	test_shader.SetUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	
 	// render loop (happens every frame) -----------------------------------------
 	while (!glfwWindowShouldClose(window)) {
 		// -> frame time tracker
 		Renderer::FrameTimeTracker();
+		
+		// -> input handling
+		processInput(window);
 
 		// --> space configurations and rendering
 		Renderer::SetRender3D(true);
-		Renderer::RenderConfig(.5f, .5f, .5f);
+		Renderer::RenderConfig();
 		glEnable(GL_DEPTH_TEST);
 		
 		// ---> world config
-		glm::mat4 projection = glm::perspective
+		glm::mat4 projection3D = glm::perspective
 		(glm::radians(camera.Zoom), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
-		Renderer::SetProjection(projection);
+		Renderer::SetProjection(projection3D);
 
 		// ---> camera config
-		glm::mat4 view = camera.GetViewMatrix();
-		Renderer::SetView(view);
-		Renderer::GetShader("test_shader").SetUniform("viewPos", camera.Position);
+		glm::mat4 view3D = camera.GetViewMatrix();
+		Renderer::SetView(view3D);
+		test_shader.SetUniform("viewPos", camera.Position);
 
 		// ---> model positioning
-		glm::mat4 model = glm::mat4(1.0f);
-		Renderer::SetModel(model);
-		Renderer::Render(cube_va, ib, Renderer::GetShader("test_shader"));
+		glm::mat4 model3D = glm::mat4(1.0f);
+		Renderer::SetModel(model3D);
+		glActiveTexture(GL_TEXTURE0);
+		container.Bind();
+		//test_shader.SetUniform("textColor", glm::vec3(sin(glfwGetTime()), 1.0f, 1.0f));
+		Renderer::Render(cube_va, ib, test_shader);
 
 		glm::vec3 lightPos(1.5 * sin(glfwGetTime()), 1.0f, 1.5 * cos(glfwGetTime()));
-		Renderer::GetShader("test_shader").SetUniform("light.position", lightPos);
-		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f));
-		Renderer::SetModel(model);
-		Renderer::Render(light_va, ib, Renderer::GetShader("light_shader"));
-
-		//glDisable(GL_DEPTH_TEST);
+		test_shader.SetUniform("light.position", lightPos);
+		model3D = glm::translate(model3D, lightPos);
+		model3D = glm::scale(model3D, glm::vec3(0.2f));
+		Renderer::SetModel(model3D);
+		Renderer::Render(light_va, ib, light_shader);
+		glDisable(GL_DEPTH_TEST);
 
 		///* Freetype and text related code - Temporarily disabled
 		Renderer::SetRender3D(false);
@@ -346,9 +373,39 @@ int main() {
 	return 0;
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+void processInput(GLFWwindow* window) {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	const float cameraSpeed = 2.5f * Renderer::GetDeltaTime();
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(FORWARD, Renderer::GetDeltaTime());
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(BACKWARD, Renderer::GetDeltaTime());
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(LEFT, Renderer::GetDeltaTime());
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(RIGHT, Renderer::GetDeltaTime());
+}
+
+void mouse_callback(GLFWwindow* window, double xPos, double yPos) {
+	if (firstMouse) {
+		lastX = xPos;
+		lastY = yPos;
+		firstMouse = false;
+	}
+
+	float xOffset = xPos - lastX;
+	float yOffset = lastY - yPos;
+
+	lastX = xPos;
+	lastY = yPos;
+
+	camera.ProcessMouseMovement(xOffset, yOffset);
+}
+
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset) {
+	camera.ProcessMouseScroll(yOffset);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {

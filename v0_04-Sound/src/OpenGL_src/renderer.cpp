@@ -68,20 +68,23 @@ Shader& Renderer::LoadShader
 }
 
 Texture& Renderer::LoadTexture
-    (std::string name, const char* file, bool alpha, bool flipImage) {
+    (std::string name, const char* file, bool flipImage) {
 
     textures.emplace(name, Texture());
-    if (alpha) {
-        textures.at(name).format = GL_RGBA;
-    }
-
     ImgLoader img(file);
+    
     if (img.GetLog() == nullptr) {
+        switch(img.GetChannels()){
+            case 3: textures.at(name).format = GL_RGB; break;
+            case 4: textures.at(name).format = GL_RGBA; break;
+            default: textures.at(name).format = GL_RGB; break;
+        }
         textures.at(name).Load(img.GetData(), img.GetWidth(), img.GetHeight());
     }
     else {
         std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE: "
-            << name << "\n" << img.GetLog() << std::endl;
+            << name << "\n" 
+            << "->ERROR_CODE: " << img.GetLog() << std::endl;
     }
     return textures.at(name);
 }

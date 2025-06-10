@@ -22,7 +22,7 @@ public:
 	(const std::string name, const char* vertPath, const char* fragPath);
 	static Texture& LoadTexture(std::string name);
 	static Texture& LoadTexture
-	(std::string name, const char* file, bool alpha, bool flipImage);
+	(std::string name, const char* file, bool flipImage);
 
 	static void SetRender3D(const bool m) { render3D = m; }
 	static void SetProjection(const glm::mat4& p) { projection = p; }
