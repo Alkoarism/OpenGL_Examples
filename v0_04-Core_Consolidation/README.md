@@ -1,6 +1,6 @@
-# Sound
+# Core Engine Consolidation
 In this version, there are a few objectives for the project:
-- Make sense of the core engine :o:
+- Make sense of the core engine :heavy_check_mark:
 - Sketch a preliminary documentation :o:
 	- Camera :heavy_check_mark:
 	- IBO´s, VBO´s, VBL´s and VAO´s :heavy_check_mark:
@@ -8,23 +8,33 @@ In this version, there are a few objectives for the project:
 	- Shaders
 	- Renderer
 
-	- Bitmap-Font
+	- ImgLoader
 	- Entity
 	- Sprite-Renderer
+	- Bitmap-Font
 	- Freetype
-- Implement sound on the core engine
+- Consolidate the core engine features with the Entity class
 
 This README by itself will be used as such sketch in order to facilitate future understanding of the inner workings of the engine. Thus:
 
-## Sound Implementation Notes
-- v0.04.00: README refactoring
-- v0.04.01: Rebuild Texture Class
-- v0.04.02: Rebuild bitmap_font class
-- v0.04.03: Add Freetype implementation class
+## Development Plan Notes
+- v0.04: README refactoring
+- v0.04: Core engine consolidation
+
+- v0.04.00: Sketch a working example of usage of the current features
+- v0.04.01: Consolidate Vertex, Texture and Shader Data with Entity class
+- v0.04.02: Rebuild Texture Class
+- v0.04.03: Rebuild bitmap_font class inheriting from Entity
+- v0.04.04: Add Freetype implementation class inheriting from Entity
 - v0.04.04: Inclusion of Bitmap and Freetype as modules of the core engine
-- v0.04.05: Add OpenAL sound API
-- v0.04.06: Implement sound class
-- v0.04.07: Inclusion of sound class as part of the core engine
+
+
+- v0.05: Module and Third party resources consolidation
+
+- v0.05.00: Add modular support for classes at compile time
+- v0.05.01: Add OpenAL sound API
+- v0.05.02: Implement sound class
+- v0.05.03: Inclusion of sound class as part of the core engine
 
 ## Core engine Documentation
 The engine is structured mainly with an DOP desing in mind.

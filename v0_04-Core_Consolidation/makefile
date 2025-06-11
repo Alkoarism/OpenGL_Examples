@@ -23,7 +23,7 @@ OBJDIR := obj
 BINDIR := bin
 
 # Executable name
-TARGET := sound
+TARGET := core_consolidation
 EXEC := $(BINDIR)/$(TARGET)
 
 # Source and object files
