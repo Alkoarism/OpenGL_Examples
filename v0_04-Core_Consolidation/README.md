@@ -21,7 +21,7 @@ This README by itself will be used as such sketch in order to facilitate future 
 - v0.04: README refactoring
 - v0.04: Core engine consolidation
 
-- v0.04.00: Sketch a working example of usage of the current features
+- v0.04.00: Sketch a working example of usage of the current features :heavy_check_mark:
 - v0.04.01: Consolidate Vertex, Texture and Shader Data with Entity class
 - v0.04.02: Rebuild Texture Class
 - v0.04.03: Rebuild bitmap_font class inheriting from Entity
