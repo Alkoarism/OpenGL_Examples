@@ -24,17 +24,16 @@ This README by itself will be used as such sketch in order to facilitate future 
 - v0.04.00: Sketch a working example of usage of the current features :heavy_check_mark:
 - v0.04.01: Consolidate Vertex, Texture and Shader Data with Entity class
 - v0.04.02: Rebuild Texture Class
-- v0.04.03: Rebuild bitmap_font class inheriting from Entity
-- v0.04.04: Add Freetype implementation class inheriting from Entity
-- v0.04.04: Inclusion of Bitmap and Freetype as modules of the core engine
-
 
 - v0.05: Module and Third party resources consolidation
 
 - v0.05.00: Add modular support for classes at compile time
-- v0.05.01: Add OpenAL sound API
-- v0.05.02: Implement sound class
-- v0.05.03: Inclusion of sound class as part of the core engine
+- v0.04.01: Rebuild bitmap_font class inheriting from Entity
+- v0.04.02: Add Freetype implementation class inheriting from Entity
+- v0.04.03: Inclusion of Bitmap and Freetype as modules of the core engine
+- v0.05.04: Add OpenAL sound API
+- v0.05.05: Implement sound class
+- v0.05.06: Inclusion of sound class as part of the core engine
 
 ## Core engine Documentation
 The engine is structured mainly with an DOP desing in mind.
