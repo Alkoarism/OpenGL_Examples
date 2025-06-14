@@ -1,4 +1,5 @@
 #include "OpenGL/renderer.h"
+#include "World/things.h"
 #include "OpenGL/camera.h"
 
 #include <ft2build.h>
@@ -105,7 +106,7 @@ int main() {
 		}
 
 		//generate texture
-		Texture& texture = Renderer::LoadTexture("Freetype_" + std::to_string(c));
+		Texture& texture = Things::LoadTexture("Freetype_" + std::to_string(c));
 		texture.type = GL_TEXTURE_2D;
 		texture.format = GL_RED;
 		texture.Load(
@@ -138,7 +139,7 @@ int main() {
 		0.0f, static_cast<float>(screenHeight), 
 		0.0f, static_cast<float>(screenWidth));
 
-	Shader& freetype2D = Renderer::LoadShader(
+	Shader& freetype2D = Things::LoadShader(
 		"freetype2D",
 		"res\\shaders\\main2D.vert",
 		"res\\shaders\\freetype2D.frag"
@@ -146,7 +147,7 @@ int main() {
 	freetype2D.SetUniform("projection", projection);
 	freetype2D.SetUniform("model", model);
 
-	Shader& bitmap2D = Renderer::LoadShader(
+	Shader& bitmap2D = Things::LoadShader(
 		"bitmap2D",
 		"res\\shaders\\main2D.vert",
 		"res\\shaders\\bitmap2D.frag"
@@ -166,7 +167,7 @@ int main() {
 	};
 	IBO.reset(new IndexBuffer(textIndices, 6));
 
-	BitmapFont font(bitmap2D, Renderer::LoadTexture("BitmapTexture"));
+	BitmapFont font(bitmap2D, Things::LoadTexture("BitmapTexture"));
 	font.Load("res\\bitmap\\timesNewRoman.bff");
 	//*/
 
@@ -270,7 +271,7 @@ int main() {
 	//*/
 
 	// texture handling ----------------------------------------------------------
-	Texture& container = Renderer::LoadTexture("container", "res\\textures\\container.jpg", true);
+	Texture& container = Things::LoadTexture("container", "res\\textures\\container.jpg", true);
 
 	container.SetPar(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	container.SetPar(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -278,12 +279,12 @@ int main() {
 	container.SetPar(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// initialization before rendering -------------------------------------------
-	Shader& light_shader = Renderer::LoadShader(
+	Shader& light_shader = Things::LoadShader(
 		"light_shader", 
 		"res\\shaders\\lightSource.vert", 
 		"res\\shaders\\lightSource.frag");
 	
-	Shader& test_shader = Renderer::LoadShader(
+	Shader& test_shader = Things::LoadShader(
 		"test_shader", 
 		"res\\shaders\\test.vert", 
 		"res\\shaders\\test.frag");

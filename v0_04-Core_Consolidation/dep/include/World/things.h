@@ -1,0 +1,32 @@
+#ifndef THINGS_H
+#define THINGS_H
+
+#include "headers.h"
+#include "OpenGL/vertex_array.h"
+#include "OpenGL/index_buffer.h"
+#include "OpenGL/shader.h"
+#include "OpenGL/texture.h"
+
+#include "World/entity.h"
+
+#include "Modules/imgLoader/imgLoader.h"
+
+//Stores all the data directely managed by the Engine on a currently running program
+class Things{
+public:
+	static Shader& LoadShader
+	(const std::string name, const char* vertPath, const char* fragPath);
+	static Texture& LoadTexture(std::string name);
+	static Texture& LoadTexture
+	(std::string name, const char* file, bool flipImage);
+
+    static Shader& GetShader(const std::string name);
+	static Texture& GetTexture(const std::string name);
+
+private:
+	static std::map<std::string, Shader> shaders;
+	static std::map<std::string, Texture> textures;
+    static std::map<std::string, Entity> entities;
+};
+
+#endif
