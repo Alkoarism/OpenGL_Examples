@@ -8,6 +8,7 @@
 #include "OpenGL/texture.h"
 
 #include "World/entity.h"
+#include "World/mesh.h"
 
 #include "Modules/imgLoader/imgLoader.h"
 
@@ -19,14 +20,16 @@ public:
 	static Texture& LoadTexture(std::string name);
 	static Texture& LoadTexture
 	(std::string name, const char* file, bool flipImage);
+	static Mesh& LoadMesh(std::string name);
 
     static Shader& GetShader(const std::string name);
 	static Texture& GetTexture(const std::string name);
+	static Mesh& GetTMesh(const std::string name);
 
 private:
-	static std::map<std::string, Shader> shaders;
-	static std::map<std::string, Texture> textures;
-    static std::map<std::string, Entity> entities;
+	static std::map<std::string, Shader> m_Shaders;
+	static std::map<std::string, Texture> m_Textures;
+    static std::map<std::string, Mesh> m_Meshes;
 };
 
 #endif

@@ -30,41 +30,41 @@ Shader& Things::LoadShader
         std::cout << "ERROR::SHADER::FILE_TO_LOAD_FILE" << std::endl;
     }
 
-    shaders.emplace(name, Shader());
-    shaders[name].Compile(vertexCode.c_str(), fragmentCode.c_str());
-    return shaders[name];
+    m_Shaders.emplace(name, Shader());
+    m_Shaders[name].Compile(vertexCode.c_str(), fragmentCode.c_str());
+    return m_Shaders[name];
 }
 
 Texture& Things::LoadTexture
     (std::string name, const char* file, bool flipImage) {
 
-    textures.emplace(name, Texture());
+    m_Textures.emplace(name, Texture());
     ImgLoader img(file);
     
     if (img.GetLog() == nullptr) {
         switch(img.GetChannels()){
-            case 3: textures.at(name).format = GL_RGB; break;
-            case 4: textures.at(name).format = GL_RGBA; break;
-            default: textures.at(name).format = GL_RGB; break;
+            case 3: m_Textures.at(name).format = GL_RGB; break;
+            case 4: m_Textures.at(name).format = GL_RGBA; break;
+            default: m_Textures.at(name).format = GL_RGB; break;
         }
-        textures.at(name).Load(img.GetData(), img.GetWidth(), img.GetHeight());
+        m_Textures.at(name).Load(img.GetData(), img.GetWidth(), img.GetHeight());
     }
     else {
         std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE: "
             << name << "\n" 
             << "->ERROR_CODE: " << img.GetLog() << std::endl;
     }
-    return textures.at(name);
+    return m_Textures.at(name);
 }
 
 Texture& Things::LoadTexture(std::string name) {
-    textures.emplace(name, Texture());
-    return textures.at(name);
+    m_Textures.emplace(name, Texture());
+    return m_Textures.at(name);
 }
 
 Shader& Things::GetShader(const std::string name) {
     try {
-        return shaders.at(name);
+        return m_Shaders.at(name);
     }
     catch (std::exception e) {
         std::cout << "ERROR::RENDERER::SHADER::FILE_NAME_NOT_FOUND: "
@@ -74,7 +74,7 @@ Shader& Things::GetShader(const std::string name) {
 
 Texture& Things::GetTexture(const std::string name) {
     try {
-        return textures.at(name);
+        return m_Textures.at(name);
     }
     catch (std::exception e) {
         std::cout << "ERROR::RENDERER::TEXTURE::FILE_NAME_NOT_FOUND: "
@@ -82,5 +82,5 @@ Texture& Things::GetTexture(const std::string name) {
     }
 }
 
-std::map<std::string, Shader> Things::shaders;
-std::map<std::string, Texture> Things::textures;
+std::map<std::string, Shader> Things::m_Shaders;
+std::map<std::string, Texture> Things::m_Textures;

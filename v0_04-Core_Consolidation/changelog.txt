@@ -1,3 +1,5 @@
+[2025-06-16 11:56:55] v0_04_01_05: Added Assimp to include path
+[2025-06-16 11:29:57] v0_04_01_04: Added a sketch for the Entity Class
 [2025-06-14 11:45:17] v0_04_01_03: Removed resources from renderer and moved to "Things" generic global resource storage class
 [2025-06-14 10:49:17] v0_04_01_02: Created World folder to sort between Modules, OpenGL and Scene related classes
 [2025-06-12 11:57:23] v0_04_01_01: Final test for deployment of new changelog file
