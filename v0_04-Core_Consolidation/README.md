@@ -28,12 +28,13 @@ This README by itself will be used as such sketch in order to facilitate future 
 - v0.05: Module and Third party resources consolidation
 
 - v0.05.00: Add modular support for classes at compile time
-- v0.04.01: Rebuild bitmap_font class inheriting from Entity
-- v0.04.02: Add Freetype implementation class inheriting from Entity
-- v0.04.03: Inclusion of Bitmap and Freetype as modules of the core engine
-- v0.05.04: Add OpenAL sound API
-- v0.05.05: Implement sound class
-- v0.05.06: Inclusion of sound class as part of the core engine
+- v0.05.01: Rebuild bitmap_font class inheriting from Entity
+- v0.05.02: Add Freetype implementation class inheriting from Entity
+- v0.05.03: Implement Batch rendeding for the text classes
+- v0.05.04: Inclusion of Bitmap and Freetype as modules of the core engine
+- v0.05.05: Add OpenAL sound API
+- v0.05.06: Implement sound class
+- v0.05.07: Inclusion of sound class as part of the core engine
 
 ## Core engine Documentation
 The engine is structured mainly with an DOP desing in mind.

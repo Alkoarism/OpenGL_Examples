@@ -10,9 +10,8 @@ public:
     float rotation;
     bool active;
 
-    Entity( glm::vec3 pos = glm::vec3(0.0f),
-            glm::vec3 size  = glm::vec3(1.0f),
-            glm::vec3 color = glm::vec3(1.0f));
+    Entity();
+    Entity(glm::vec3 pos, glm::vec3 size, glm::vec3 color);
 
     virtual ~Entity() = default;
     
@@ -27,9 +26,7 @@ public:
 private:
 	std::string m_ShaderName;
     std::string m_Textures;
-    std::unique_ptr<IndexBuffer> m_IBO;
-	std::unique_ptr<VertexBuffer> m_VBO;
-    VertexArray m_VAO;
+    VertexArray& m_VAO;
 };
 
 #endif
