@@ -16,7 +16,7 @@ CXXFLAGS := -O2 -static-libstdc++ $(INCLUDES) $(WIN_INCLUDES)
 # Flags
 ASSIMP_LIB := -lassimp
 FREETYPE_LIB := -lfreetype
-OPENGLFLAGS := $(FREETYPE_LIB) -lglfw3 -lopengl32 -lgdi32 -luser32 -lkernel32
+OPENGLFLAGS := $(ASSIMP_LIB) $(FREETYPE_LIB) -lglfw3 -lopengl32 -lgdi32 -luser32 -lkernel32
 #CXXFLAGS := -Wall -Wextra -Werror -g -O2
 
 # Directory structure

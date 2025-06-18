@@ -1,3 +1,5 @@
+[2025-06-18 13:45:52] v0_04_01_05: Proper set up of assimp´s library and includes
+[2025-06-18 13:44:34] v0_04_01_05: Properly sat up assimp´s librari
 [2025-06-16 11:56:55] v0_04_01_05: Added Assimp to include path
 [2025-06-16 11:29:57] v0_04_01_04: Added a sketch for the Entity Class
 [2025-06-14 11:45:17] v0_04_01_03: Removed resources from renderer and moved to "Things" generic global resource storage class
