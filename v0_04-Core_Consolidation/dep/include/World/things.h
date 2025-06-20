@@ -8,7 +8,6 @@
 #include "OpenGL/texture.h"
 
 #include "World/entity.h"
-#include "World/mesh.h"
 
 #include "Modules/imgLoader/imgLoader.h"
 
