@@ -5,6 +5,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include "World/mesh.h"
+
 #include "Modules/glyphLoader/bitmap_font.h"
 
 // function declarations ------------------------------------------------------
@@ -253,19 +255,13 @@ int main() {
 	// vertex and buffers configurations -----------------------------------------
 	VertexArray light_va, cube_va;
 
+	Mesh lightMesh(light_vData, std::vector<unsigned int>{3}, vertexIndices);
 	light_va.Bind();
-	VertexBuffer light_vb(light_vData.data(), sizeof(decltype(light_vData[0])) * light_vData.size());
-	VertexBufferLayout light_vbl;
-	light_vbl.Push<float>(3);
-	light_va.AddBuffer(light_vb, light_vbl);
+	light_va.AddBuffer(lightMesh.GetVertexData(), lightMesh.GetVertexLayout());
 	
+	Mesh cubeMesh(cube_vData, std::vector<unsigned int>{3,3,2}, vertexIndices);
 	cube_va.Bind();
-	VertexBuffer cube_vb(cube_vData.data(), sizeof(decltype(cube_vData[0])) * cube_vData.size());
-	VertexBufferLayout cube_vbl;
-	cube_vbl.Push<float>(3);
-	cube_vbl.Push<float>(3);
-	cube_vbl.Push<float>(2);
-	cube_va.AddBuffer(cube_vb, cube_vbl);
+	cube_va.AddBuffer(cubeMesh.GetVertexData(), cubeMesh.GetVertexLayout());
 
 	IndexBuffer ib(&vertexIndices[0], vertexIndices.size());
 	//*/

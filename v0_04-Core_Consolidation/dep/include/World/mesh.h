@@ -8,11 +8,19 @@
 
 class Mesh{
 public:
-    Mesh();
-
-
+    Mesh(const std::vector<float>& vData,
+         const std::vector<unsigned int>& bufferLayout,
+         const std::vector<unsigned int>& indices);
+    ~Mesh();
+    
+    const VertexBuffer& GetVertexData(){ return *m_VBO; }
+    const IndexBuffer& GetIndexData() { return *m_IBO; }
+    const VertexBufferLayout& GetVertexLayout() { return m_VBL; }
+    
 private:
-
+    VertexBufferLayout m_VBL;
+    std::unique_ptr<VertexBuffer> m_VBO;
+    std::unique_ptr<IndexBuffer> m_IBO;
 };
 
 #endif
